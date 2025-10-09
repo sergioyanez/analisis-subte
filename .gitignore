@@ -8,6 +8,7 @@
 historicos_parquet_final/
 historicos_parquet_simple/
 historicos_parquet_ordenado/
+historicos_parquet_limpio/
 
 # Opcional: Ignorar el directorio de datasets con features si también es pesado
-dataset_subtes_final_con_features/
+final_con_features/
