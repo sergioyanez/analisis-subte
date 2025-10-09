@@ -1,0 +1,13 @@
+# Ignorar todos los archivos CSV en el directorio raíz y subdirectorios
+*.csv
+
+# Ignorar todos los archivos XLSX (Excel)
+*.xlsx
+
+# Ignorar los directorios de datos Parquet
+historicos_parquet_final/
+historicos_parquet_simple/
+historicos_parquet_ordenado/
+
+# Opcional: Ignorar el directorio de datasets con features si también es pesado
+dataset_subtes_final_con_features/
