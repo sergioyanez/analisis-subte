@@ -19,9 +19,49 @@ print(valores_unicos)
 print("----------------------------------------------------")
 
 # Contamos cuántos son de tipo texto y cuántos son numéricos
-nombres = [v for v in valores_unicos if isinstance(v, str)]
-numeros = [v for v in valores_unicos if not isinstance(v, str)]
+def es_numerico(valor):
+    """Verifica si un valor es numérico, incluso si está almacenado como string"""
+    try:
+        # Intenta convertir a float
+        float(valor)
+        return True
+    except (ValueError, TypeError):
+        return False
+
+nombres = []
+numeros = []
+
+for v in valores_unicos:
+    if es_numerico(v):
+        numeros.append(v)
+    else:
+        nombres.append(v)
 
 print(f"\nResumen del Diagnóstico:")
-print(f"  - Se encontraron {len(nombres)} nombres de estación (ej: '{nombres[0]}')")
-print(f"  - Se encontraron {len(numeros)} valores numéricos que deberían ser nombres.")
+print(f"  - Se encontraron {len(nombres)} nombres de estación de texto")
+if len(nombres) > 0:
+    print(f"    Ejemplos: {nombres[:5]}")
+print(f"  - Se encontraron {len(numeros)} valores numéricos que deberían ser nombres")
+if len(numeros) > 0:
+    print(f"    Ejemplos: {numeros[:10]}")
+
+# Análisis adicional de los valores numéricos
+if len(numeros) > 0:
+    print(f"\n📊 Análisis de valores numéricos:")
+    numeros_float = [float(n) for n in numeros]
+    print(f"  - Rango: {min(numeros_float):.1f} - {max(numeros_float):.1f}")
+    print(f"  - Total de valores únicos numéricos: {len(set(numeros_float))}")
+
+    # Mostrar algunos ejemplos de conversión
+    print(f"\n🔍 Ejemplos de conversión:")
+    for i, num in enumerate(numeros[:10]):
+        print(f"  '{num}' → {float(num)}")
+
+# Mostrar el porcentaje de cada tipo
+total = len(valores_unicos)
+pct_nombres = (len(nombres) / total) * 100
+pct_numeros = (len(numeros) / total) * 100
+
+print(f"\n📈 Distribución:")
+print(f"  - Nombres de texto: {len(nombres)} ({pct_nombres:.1f}%)")
+print(f"  - Valores numéricos: {len(numeros)} ({pct_numeros:.1f}%)")
