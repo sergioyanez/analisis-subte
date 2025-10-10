@@ -1,3 +1,5 @@
+.idea
+
 # Ignorar todos los archivos CSV en el directorio raíz y subdirectorios
 *.csv
 
@@ -12,3 +14,6 @@ historicos_parquet_limpio/
 
 # Opcional: Ignorar el directorio de datasets con features si también es pesado
 final_con_features/
+
+venv
+PyCharm 2025.2.3
