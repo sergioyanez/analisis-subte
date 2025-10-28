@@ -20,6 +20,39 @@ RUTAS = {
 }
 
 
+def _contar_estacion(ddf: dd.DataFrame) -> dict:
+    """Cuenta valores numéricos y no numéricos en 'estacion' de forma robusta.
+
+    - Normaliza espacios en blanco.
+    - Intenta convertir a numérico; valores convertibles cuentan como numéricos.
+    """
+    if 'estacion' not in ddf.columns:
+        return None
+
+    # Limpieza ligera para mejorar la conversión a numérico
+    est = ddf['estacion'].astype('string').str.strip()
+    # Intento de conversión a numérico por-partición
+    est_num = dd.to_numeric(est, errors='coerce')
+
+    with ProgressBar():
+        total = ddf.shape[0].compute()
+        numericos = int(est_num.notna().sum().compute())
+
+    no_numericos = int(total - numericos)
+
+    # Ejemplos (muestra) para inspección
+    try:
+        ejemplos = est.head(10).tolist()
+    except Exception:
+        ejemplos = []
+
+    return {
+        'numericos': numericos,
+        'no_numericos': no_numericos,
+        'ejemplos': ejemplos,
+    }
+
+
 def contar_registros(ruta: str) -> dict:
     """
     Cuenta registros totales y analiza la columna 'estacion' si existe.
@@ -28,22 +61,10 @@ def contar_registros(ruta: str) -> dict:
         ddf = dd.read_parquet(ruta)
 
         with ProgressBar():
-            total = len(ddf)
+            total = int(ddf.shape[0].compute())
             columnas = list(ddf.columns)
 
-            # Si existe la columna 'estacion', analizarla
-            estacion_info = None
-            if 'estacion' in columnas:
-                estacion_series = ddf['estacion'].astype(str)
-
-                # Contar cuántos son numéricos (pueden convertirse a número)
-                numericos = (~dd.to_numeric(estacion_series, errors='coerce').isna()).sum()
-                no_numericos = total - numericos
-
-                estacion_info = {
-                    'numericos': int(numericos.compute()),
-                    'no_numericos': int(no_numericos.compute())
-                }
+        estacion_info = _contar_estacion(ddf) if 'estacion' in columnas else None
 
         return {
             'existe': True,
@@ -86,8 +107,10 @@ def main():
                 print(f"   🏢 Columna 'estacion':")
                 print(f"      - Valores NUMÉRICOS: {est['numericos']:,}")
                 print(f"      - Valores NO numéricos (texto): {est['no_numericos']:,}")
-                porcentaje_numericos = (est['numericos'] / info['total']) * 100
+                porcentaje_numericos = (est['numericos'] / info['total']) * 100 if info['total'] else 0
                 print(f"      - % de registros numéricos: {porcentaje_numericos:.2f}%")
+                if est.get('ejemplos'):
+                    print(f"      - Ejemplos (muestra): {est['ejemplos']}")
         else:
             print(f"   ❌ Error: {info.get('error', 'Desconocido')}")
 
