@@ -64,7 +64,7 @@ def main():
     Función principal para cargar los datos y ejecutar el resumen.
     """
     # Apunta a la versión final con las nuevas características.
-    PARQUET_PATH = "data/dataset_subtes/historicos_parquet_limpio"
+    PARQUET_PATH = "data/dataset_subtes/final_con_features"
 
     try:
         print(f"🔎 Cargando datos desde: {PARQUET_PATH}")
